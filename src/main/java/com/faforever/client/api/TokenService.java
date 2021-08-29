@@ -19,6 +19,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.Collections;
 
 @Service
@@ -69,7 +70,7 @@ public class TokenService implements InitializingBean {
     }
   }
 
-  public synchronized void loginWithAuthorizationCode(String code) {
+  public synchronized void loginWithAuthorizationCode(String code, URI redirectUri) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON_UTF8));
@@ -78,7 +79,7 @@ public class TokenService implements InitializingBean {
     map.add("code", code);
     Oauth oauth = clientProperties.getOauth();
     map.add("client_id", oauth.getClientId());
-    map.add("redirect_uri", oauth.getRedirectUrl());
+    map.add("redirect_uri", redirectUri.toASCIIString());
     map.add("grant_type", "authorization_code");
 
     retrieveToken(headers, map, oauth);
@@ -93,7 +94,6 @@ public class TokenService implements InitializingBean {
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("refresh_token", refreshToken);
     map.add("client_id", oauth.getClientId());
-    map.add("redirect_uri", oauth.getRedirectUrl());
     map.add("grant_type", "refresh_token");
 
     retrieveToken(headers, map, oauth);

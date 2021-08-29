@@ -2,7 +2,9 @@ package com.faforever.client.update;
 
 import lombok.Data;
 
+import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -14,6 +16,7 @@ public class ClientConfiguration {
   private ReleaseInfo latestRelease;
   private List<ServerEndpoints> endpoints;
   private GitHubRepo gitHubRepo;
+  private OAuth oAuth;
 
   @Data
   public static class GitHubRepo {
@@ -54,5 +57,16 @@ public class ClientConfiguration {
     private boolean mandatory;
     private String message;
     private URL releaseNotesUrl;
+  }
+
+  @Data
+  public static class OAuth {
+    /**
+     * A list of allowed redirect URIs when opening a local HTTP server. The host should always be {@literal localhost}.
+     * The client would preferably open a random port, however, the server will check the redirect URI and does not
+     * allow random ports. Therefore, the server needs to tell the client which URIs it might use. One would be enough
+     * but since the port might not be available, multiple are needed.
+     */
+    private Collection<URI> redirectUris;
   }
 }
