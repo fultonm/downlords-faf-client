@@ -13,7 +13,6 @@ import javafx.beans.property.StringProperty;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ForgedAlliancePrefs {
 
@@ -24,7 +23,7 @@ public class ForgedAlliancePrefs {
   public static final String INIT_FILE_NAME = "init.lua";
 
   static {
-    FAF_VAULT_PATH = PreferencesService.FAF_DATA_DIRECTORY.resolve(Path.of("user", "My Games", "Gas Powered Games", "Supreme Commander Forged Alliance"));
+    FAF_VAULT_PATH = PreferencesService.FAF_DATA_DIRECTORY.resolve(Path.of("vault"));
     if (org.bridj.Platform.isWindows()) {
       GPG_VAULT_PATH = Path.of(Shell32Util.getFolderPath(ShlObj.CSIDL_PERSONAL), "My Games", "Gas Powered Games", "Supreme Commander Forged Alliance");
       //If steam is every swapped to a 64x client, needs to be updated to proper directory or handling must be put in place.
@@ -42,7 +41,7 @@ public class ForgedAlliancePrefs {
   private final ObjectProperty<Path> preferencesFile;
   private final ObjectProperty<Path> vaultBaseDirectory;
   @JsonIgnore
-  private final ObjectProperty<Path> customMapsDirectory;
+  private final ObjectProperty<Path> mapsDirectory;
   @JsonIgnore
   private final ObjectProperty<Path> modsDirectory;
   private final BooleanProperty forceRelay;
@@ -72,24 +71,16 @@ public class ForgedAlliancePrefs {
       installationPath = new SimpleObjectProperty<>();
     }
     vaultBaseDirectory = new SimpleObjectProperty<>(FAF_VAULT_PATH);
-    customMapsDirectory = new SimpleObjectProperty<>();
+    mapsDirectory = new SimpleObjectProperty<>();
     modsDirectory = new SimpleObjectProperty<>();
     preferencesFile = new SimpleObjectProperty<>(LOCAL_FA_DATA_PATH.resolve("Game.prefs"));
     autoDownloadMaps = new SimpleBooleanProperty(true);
     executableDecorator = new SimpleStringProperty();
     executionDirectory = new SimpleObjectProperty<>();
     vaultCheckDone = new SimpleBooleanProperty(false);
-    bindVaultPath();
     allowReplaysWhileInGame = new SimpleBooleanProperty(false);
-  }
 
-  /**
-   * Needs to be called after gson deserialization again. Because otherwise the both are bound to the default vaultBaseDirectory and not the one loaded by Gson.
-   */
-  void bindVaultPath() {
-    customMapsDirectory.unbind();
-    modsDirectory.unbind();
-    customMapsDirectory.bind(Bindings.createObjectBinding(() -> getVaultBaseDirectory().resolve("maps"), vaultBaseDirectory));
+    mapsDirectory.bind(Bindings.createObjectBinding(() -> getVaultBaseDirectory().resolve("maps"), vaultBaseDirectory));
     modsDirectory.bind(Bindings.createObjectBinding(() -> getVaultBaseDirectory().resolve("mods"), vaultBaseDirectory));
   }
 
@@ -141,16 +132,16 @@ public class ForgedAlliancePrefs {
     return modsDirectory;
   }
 
-  public Path getCustomMapsDirectory() {
-    return customMapsDirectory.get();
+  public Path getMapsDirectory() {
+    return mapsDirectory.get();
   }
 
-  public void setCustomMapsDirectory(Path customMapsDirectory) {
-    this.customMapsDirectory.set(customMapsDirectory);
+  public void setMapsDirectory(Path mapsDirectory) {
+    this.mapsDirectory.set(mapsDirectory);
   }
 
-  public ObjectProperty<Path> customMapsDirectoryProperty() {
-    return customMapsDirectory;
+  public ObjectProperty<Path> mapsDirectoryProperty() {
+    return mapsDirectory;
   }
 
   public String getExecutableDecorator() {

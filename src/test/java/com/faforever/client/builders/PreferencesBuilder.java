@@ -283,8 +283,8 @@ public class PreferencesBuilder {
     }
 
     public ForgedAlliancePrefsBuilder customMapsDirectory(Path customMapsDirectory) {
-      forgedAlliancePrefs.customMapsDirectoryProperty().unbind();
-      forgedAlliancePrefs.setCustomMapsDirectory(customMapsDirectory);
+      forgedAlliancePrefs.mapsDirectoryProperty().unbind();
+      forgedAlliancePrefs.setMapsDirectory(customMapsDirectory);
       return this;
     }
 
