@@ -16,20 +16,21 @@ import java.nio.file.Path;
 
 public class ForgedAlliancePrefs {
 
-  public static final Path FAF_VAULT_PATH;
   public static final Path GPG_VAULT_PATH;
   public static final Path STEAM_FA_PATH;
   public static final Path LOCAL_FA_DATA_PATH;
   public static final String INIT_FILE_NAME = "init.lua";
+  private static final Path DEFAULT_DATA_DIRECTORY;
 
   static {
-    FAF_VAULT_PATH = PreferencesService.FAF_DATA_DIRECTORY.resolve(Path.of("vault"));
     if (org.bridj.Platform.isWindows()) {
+      DEFAULT_DATA_DIRECTORY = Path.of(Shell32Util.getFolderPath(ShlObj.CSIDL_COMMON_APPDATA), "FAForever");
       GPG_VAULT_PATH = Path.of(Shell32Util.getFolderPath(ShlObj.CSIDL_PERSONAL), "My Games", "Gas Powered Games", "Supreme Commander Forged Alliance");
       //If steam is every swapped to a 64x client, needs to be updated to proper directory or handling must be put in place.
       STEAM_FA_PATH = Path.of(Shell32Util.getFolderPath(ShlObj.CSIDL_PROGRAM_FILESX86), "Steam", "steamapps", "common", "Supreme Commander Forged Alliance");
       LOCAL_FA_DATA_PATH = Path.of(Shell32Util.getFolderPath(ShlObj.CSIDL_LOCAL_APPDATA), "Gas Powered Games", "Supreme Commander Forged Alliance");
     } else {
+      DEFAULT_DATA_DIRECTORY = Path.of(System.getProperty("user.home")).resolve(".faforever");
       String userHome = System.getProperty("user.home");
       GPG_VAULT_PATH = Path.of(userHome, "My Games", "Gas Powered Games", "Supreme Commander Forged Alliance");
       STEAM_FA_PATH = Path.of(".");
@@ -40,6 +41,7 @@ public class ForgedAlliancePrefs {
   private final ObjectProperty<Path> installationPath;
   private final ObjectProperty<Path> preferencesFile;
   private final ObjectProperty<Path> vaultBaseDirectory;
+  private final ObjectProperty<Path> dataDirectory;
   @JsonIgnore
   private final ObjectProperty<Path> mapsDirectory;
   @JsonIgnore
@@ -70,7 +72,8 @@ public class ForgedAlliancePrefs {
     } else {
       installationPath = new SimpleObjectProperty<>();
     }
-    vaultBaseDirectory = new SimpleObjectProperty<>(FAF_VAULT_PATH);
+    dataDirectory = new SimpleObjectProperty<>(DEFAULT_DATA_DIRECTORY);
+    vaultBaseDirectory = new SimpleObjectProperty<>(DEFAULT_DATA_DIRECTORY.resolve("vault"));
     mapsDirectory = new SimpleObjectProperty<>();
     modsDirectory = new SimpleObjectProperty<>();
     preferencesFile = new SimpleObjectProperty<>(LOCAL_FA_DATA_PATH.resolve("Game.prefs"));

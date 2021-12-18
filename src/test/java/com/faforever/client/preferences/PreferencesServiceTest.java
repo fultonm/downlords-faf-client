@@ -16,14 +16,14 @@ import java.util.regex.Pattern;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PreferencesServiceTest extends ServiceTest {
 
   private static final Pattern GAME_LOG_PATTERN = Pattern.compile("game(_\\d*)?.log");
 
-  @Mock
+
   private PreferencesService instance;
+
   @Mock
   private EventBus eventBus;
   @Mock
@@ -73,15 +73,5 @@ public class PreferencesServiceTest extends ServiceTest {
   @Test
   public void testGetCacheDirectory() throws Exception {
     assertThat(instance.getCacheDirectory(), is(instance.getFafDataDirectory().resolve("cache")));
-  }
-
-  @Test
-  public void testGetFafLogDirectory() throws Exception {
-    assertThat(instance.getFafLogDirectory(), is(instance.getFafDataDirectory().resolve("logs")));
-  }
-
-  @Test
-  public void testGetNewLogFile() throws Exception {
-    assertTrue(GAME_LOG_PATTERN.matcher(instance.getNewGameLogFile(0).getFileName().toString()).matches());
   }
 }
